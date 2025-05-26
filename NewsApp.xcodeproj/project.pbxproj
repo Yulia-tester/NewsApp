@@ -14,6 +14,7 @@
 		B24BC1B42DD1616F0026E4F1 /* TabBarController.swift in Sources */ = {isa = PBXBuildFile; fileRef = B24BC1B32DD1616F0026E4F1 /* TabBarController.swift */; };
 		B24BC1B62DD169C00026E4F1 /* BusinessViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = B24BC1B52DD169C00026E4F1 /* BusinessViewController.swift */; };
 		B24BC1B82DD169DF0026E4F1 /* TechnologyViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = B24BC1B72DD169DF0026E4F1 /* TechnologyViewController.swift */; };
+		B279E0722DE242AB00A47864 /* GeneralCollectionViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = B279E0712DE242AB00A47864 /* GeneralCollectionViewCell.swift */; };
 		B2938BEB2DE12F550068A0ED /* SnapKit in Frameworks */ = {isa = PBXBuildFile; productRef = B2938BEA2DE12F550068A0ED /* SnapKit */; };
 /* End PBXBuildFile section */
 
@@ -27,6 +28,7 @@
 		B24BC1B32DD1616F0026E4F1 /* TabBarController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TabBarController.swift; sourceTree = "<group>"; };
 		B24BC1B52DD169C00026E4F1 /* BusinessViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BusinessViewController.swift; sourceTree = "<group>"; };
 		B24BC1B72DD169DF0026E4F1 /* TechnologyViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TechnologyViewController.swift; sourceTree = "<group>"; };
+		B279E0712DE242AB00A47864 /* GeneralCollectionViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GeneralCollectionViewCell.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -62,14 +64,47 @@
 			children = (
 				B24BC19F2DD14B0D0026E4F1 /* AppDelegate.swift */,
 				B24BC1B32DD1616F0026E4F1 /* TabBarController.swift */,
-				B24BC1A32DD14B0D0026E4F1 /* GeneralViewController.swift */,
-				B24BC1B52DD169C00026E4F1 /* BusinessViewController.swift */,
-				B24BC1B72DD169DF0026E4F1 /* TechnologyViewController.swift */,
+				B279E06D2DE2424900A47864 /* General */,
+				B279E06E2DE2426500A47864 /* Business */,
+				B279E06F2DE2426F00A47864 /* Technology */,
 				B24BC1A82DD14B100026E4F1 /* Assets.xcassets */,
 				B24BC1AA2DD14B100026E4F1 /* LaunchScreen.storyboard */,
 				B24BC1AD2DD14B100026E4F1 /* Info.plist */,
 			);
 			path = NewsApp;
+			sourceTree = "<group>";
+		};
+		B279E06D2DE2424900A47864 /* General */ = {
+			isa = PBXGroup;
+			children = (
+				B279E0702DE2428A00A47864 /* View */,
+			);
+			path = General;
+			sourceTree = "<group>";
+		};
+		B279E06E2DE2426500A47864 /* Business */ = {
+			isa = PBXGroup;
+			children = (
+				B24BC1B52DD169C00026E4F1 /* BusinessViewController.swift */,
+			);
+			path = Business;
+			sourceTree = "<group>";
+		};
+		B279E06F2DE2426F00A47864 /* Technology */ = {
+			isa = PBXGroup;
+			children = (
+				B24BC1B72DD169DF0026E4F1 /* TechnologyViewController.swift */,
+			);
+			path = Technology;
+			sourceTree = "<group>";
+		};
+		B279E0702DE2428A00A47864 /* View */ = {
+			isa = PBXGroup;
+			children = (
+				B24BC1A32DD14B0D0026E4F1 /* GeneralViewController.swift */,
+				B279E0712DE242AB00A47864 /* GeneralCollectionViewCell.swift */,
+			);
+			path = View;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -149,6 +184,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				B24BC1B82DD169DF0026E4F1 /* TechnologyViewController.swift in Sources */,
+				B279E0722DE242AB00A47864 /* GeneralCollectionViewCell.swift in Sources */,
 				B24BC1B42DD1616F0026E4F1 /* TabBarController.swift in Sources */,
 				B24BC1A42DD14B0D0026E4F1 /* GeneralViewController.swift in Sources */,
 				B24BC1B62DD169C00026E4F1 /* BusinessViewController.swift in Sources */,
