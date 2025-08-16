@@ -13,7 +13,7 @@ final class ApiManager {
     private static let path = "everything"
     
     // Create url path and make request
-    static func getNews(completion: @escaping (Result<[ArticleResponceObject], Error>) -> ()) {
+    static func getNews(completion: @escaping (Result<[ArticleResponseObject], Error>) -> ()) {
         let stringUrl = baseUrl + path + "?sources=bbc-news&language=en" + "&apiKey=\(apiKey)"
         
         guard let url = URL(string: stringUrl) else { return }
@@ -30,7 +30,7 @@ final class ApiManager {
     // Handle responce
     private static func handleResponse(data: Data?,
                                        error: Error?,
-                                       completion: @escaping (Result<[ArticleResponceObject], Error>) -> ()) {
+                                       completion: @escaping (Result<[ArticleResponseObject], Error>) -> ()) {
         if let error = error {
             completion(.failure(NetworkingError.networkingError(error)))
         } else if let data = data {
