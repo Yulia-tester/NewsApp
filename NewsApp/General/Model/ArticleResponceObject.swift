@@ -7,7 +7,7 @@
 
 import Foundation
 
-struct ArticleResponceObject: Codable {
+struct ArticleResponseObject: Codable {
     let title: String
     let description: String
     let urlToImage: String
