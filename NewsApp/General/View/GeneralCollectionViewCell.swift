@@ -12,8 +12,9 @@ final class GeneralCollectionViewCell: UICollectionViewCell {
     // MARK: - GUI Variables
     private lazy var imageView: UIImageView = {
         let view = UIImageView()
-        
-        view.image = UIImage(named: "image") ?? UIImage.add
+        view.contentMode = .scaleAspectFill       // ✅ сохраняет пропорции
+        view.clipsToBounds = true                 // ✅ обрезает лишнее
+        view.backgroundColor = .secondarySystemBackground // на случай, если нет картинки
         
         return view
     }()
@@ -30,10 +31,10 @@ final class GeneralCollectionViewCell: UICollectionViewCell {
     
     private lazy var titleLabel: UILabel = {
         let label = UILabel()
-        
         label.text = "Title"
         label.textColor = .white
-        
+        label.font = .systemFont(ofSize: 16, weight: .semibold)
+        label.numberOfLines = 2                   // ✅ если заголовок длинный
         return label
     }()
     
