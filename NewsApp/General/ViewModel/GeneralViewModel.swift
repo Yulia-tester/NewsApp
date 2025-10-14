@@ -39,18 +39,18 @@ final class GeneralViewModel: GeneralViewModelProtocol {
     }
     
     func getArticle(for row: Int) -> ArticleCellViewModel {
-        let article = articles[row]
-        loadImage(for: row)
-        return article
+        return articles[row]
     }
     
     private func loadData() {
+        
         ApiManager.getNews { [weak self] result in
             guard let self = self else { return }
             
             switch result {
             case .success(let articles):
                 self.articles = self.convertToCellViewModel(articles)
+                self.loadImage()
             case .failure(let error):
                 DispatchQueue.main.async {
                     self.showError?(error.localizedDescription)
@@ -61,21 +61,22 @@ final class GeneralViewModel: GeneralViewModelProtocol {
         //setupMockObjects()
     }
     
-    private func loadImage(for row: Int) {
-//        guard let url = URL(string: articles[row].imageUrl),
-//             let data = try? Data(contentsOf: url) else { return }
-        guard articles[row].imageData == nil else { return }
+    private func loadImage() {
+        //        guard let url = URL(string: articles[row].imageUrl),
+        //             let data = try? Data(contentsOf: url) else { return }
         
-        ApiManager.getImageData(url: articles[row].imageUrl) { [weak self]
-            result in
-            
-            DispatchQueue.main.async {
-                switch result {
-                case .success(let data):
-                    self?.articles[row].imageData = data
-                    self?.reloadCell?(row)
-                case .failure(let error):
-                    self?.showError?(error.localizedDescription)
+        for (index, article) in articles.enumerated() {
+            ApiManager.getImageData(url: article.imageUrl) { [weak self]
+                result in
+                
+                DispatchQueue.main.async {
+                    switch result {
+                    case .success(let data):
+                        self?.articles[index].imageData = data
+                        self?.reloadCell?(index)
+                    case .failure(let error):
+                        self?.showError?(error.localizedDescription)
+                    }
                 }
             }
         }
