@@ -12,34 +12,31 @@ class BusinessViewController: UIViewController {
     // MARK: - GUI Variables
     private lazy var collectionView: UICollectionView = {
         let layout = UICollectionViewFlowLayout()
-        
         layout.minimumLineSpacing = 5
         layout.minimumInteritemSpacing = 5
         layout.sectionInset = UIEdgeInsets(top: 20,
                                            left: 20,
                                            bottom: 20,
                                            right: 20)
-        //layout.scrollDirection = .horizontal
-        
-        let collectionView = UICollectionView(frame: CGRect(x: 0,
-                                                            y: 0,
-                                                            width: view.frame.width,
-                                                            height: view.frame.height), collectionViewLayout: layout)
-        
+        // layout.scrollDirection = .horizontal
+
+        let collectionView = UICollectionView(frame: .zero, collectionViewLayout: layout)
         collectionView.dataSource = self
         collectionView.delegate = self
-        
+        collectionView.backgroundColor = .white
         return collectionView
     }()
     
     // MARK: - Properties
-    
-    // MARK: - Life Cycle
+    private let viewModel = BusinessViewModel() // сделал let — ViewModel обычно не пересоздают
 
+    // MARK: - Life Cycle
     override func viewDidLoad() {
         super.viewDidLoad()
         
         setupUI()
+        setupViewModel()
+        
         collectionView.register(GeneralCollectionViewCell.self,
                                 forCellWithReuseIdentifier: "GeneralCollectionViewCell")
         collectionView.register(DetailsCollectionViewCell.self,
@@ -47,14 +44,29 @@ class BusinessViewController: UIViewController {
     }
     
     // MARK: - Methods
+    private func setupViewModel() {
+        viewModel.reloadData = { [weak self] in
+            DispatchQueue.main.async {
+                self?.collectionView.reloadData()
+            }
+        }
+        
+        viewModel.reloadCell = { [weak self] indexPath in
+            DispatchQueue.main.async {
+                self?.collectionView.reloadItems(at: [indexPath])
+            }
+        }
+        
+        viewModel.showError = { error in
+            // TODO: show alert with error
+            print("❗️Error:", error)
+        }
+    }
     
     // MARK: - Private methods
     private func setupUI() {
         view.backgroundColor = .white
         view.addSubview(collectionView)
-        
-        collectionView.register(GeneralCollectionViewCell.self,
-                                forCellWithReuseIdentifier: "GeneralCollectionViewCell")
         
         setupConstraints()
     }
@@ -70,26 +82,35 @@ class BusinessViewController: UIViewController {
 // MARK: - UICollectionViewDataSource
 extension BusinessViewController: UICollectionViewDataSource {
     func numberOfSections(in collectionView: UICollectionView) -> Int {
-        2
+        return viewModel.articles.count
     }
+    
     func collectionView(_ collectionView: UICollectionView,
                         numberOfItemsInSection section: Int) -> Int {
-        section == 0 ? 1 : 15
+        return viewModel.articles[section].items.count
     }
     
     func collectionView(_ collectionView: UICollectionView,
                         cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
-        var cell: UICollectionViewCell?
+        guard let article = viewModel.articles[indexPath.section].items[indexPath.row] as? ArticleCellViewModel else {
+            return UICollectionViewCell()
+        }
         
         if indexPath.section == 0 {
-            cell = collectionView.dequeueReusableCell(withReuseIdentifier: "GeneralCollectionViewCell",
-                                                      for: indexPath) as? GeneralCollectionViewCell
-            
+            guard let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "GeneralCollectionViewCell",
+                                                                for: indexPath) as? GeneralCollectionViewCell else {
+                return UICollectionViewCell()
+            }
+            cell.set(article: article)
+            return cell
         } else {
-            cell = collectionView.dequeueReusableCell(withReuseIdentifier: "DetailsCollectionViewCell", for: indexPath) as? DetailsCollectionViewCell
-         }
-        
-        return cell ?? UICollectionViewCell()
+            guard let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "DetailsCollectionViewCell",
+                                                                for: indexPath) as? DetailsCollectionViewCell else {
+                return UICollectionViewCell()
+            }
+            cell.set(article: article)
+            return cell
+        }
     }
 }
 
@@ -97,8 +118,13 @@ extension BusinessViewController: UICollectionViewDataSource {
 extension BusinessViewController: UICollectionViewDelegate {
     func collectionView(_ collectionView: UICollectionView,
                         didSelectItemAt indexPath: IndexPath) {
-//        navigationController?.pushViewController(NewsViewController(),
-//                                                 animated: true)
+        guard let article = viewModel.articles[indexPath.section].items[indexPath.row] as? ArticleCellViewModel else {
+            return
+        }
+        
+        let newsViewModel = NewsViewModel(article: article)
+        let newsVC = NewsViewController(viewModel: newsViewModel)
+        navigationController?.pushViewController(newsVC, animated: true)
     }
 }
 
@@ -107,15 +133,9 @@ extension BusinessViewController: UICollectionViewDelegateFlowLayout {
     func collectionView(_ collectionView: UICollectionView,
                         layout collectionViewLayout: UICollectionViewLayout,
                         sizeForItemAt indexPath: IndexPath) -> CGSize {
-        let width = view.frame.width
-        let firstSectionItemSize = CGSize(width: width,
-                                          height: width)
-        let secondSectionItemSize = CGSize(width: width,
-                                           height: 100)
+        let width = view.frame.width - 40 // учитываем sectionInset
+        let firstSectionItemSize = CGSize(width: width, height: width)
+        let secondSectionItemSize = CGSize(width: width, height: 100)
         return indexPath.section == 0 ? firstSectionItemSize : secondSectionItemSize
     }
 }
-
-
-
-

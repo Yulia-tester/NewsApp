@@ -80,4 +80,15 @@ final class DetailsCollectionViewCell: UICollectionViewCell {
             make.trailing.equalToSuperview()
         }
     }
+    
+    func set(article: ArticleCellViewModel) {
+        titleLabel.text = article.title
+        descriptionLabel.text = article.description
+        if let data = article.imageData {
+            imageView.image = UIImage(data: data)
+        } else {
+            imageView.image = nil
+        }
+    }
+
 }
