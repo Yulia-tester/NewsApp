@@ -13,8 +13,10 @@ final class ApiManager {
     private static let path = "everything"
     
     // Create url path and make request
-    static func getNews(completion: @escaping (Result<[ArticleResponseObject], Error>) -> ()) {
-        let stringUrl = baseUrl + path + "?sources=bbc-news&language=en" + "&apiKey=\(apiKey)"
+    static func getNews(from category: Category,
+                        page: Int,
+                        completion: @escaping (Result<[ArticleResponseObject], Error>) -> ()) {
+        let stringUrl = baseUrl + path + "?sources=bbc-news&language=en&page=\(page)" + "&apiKey=\(apiKey)"
         
         guard let url = URL(string: stringUrl) else { return }
         

@@ -118,13 +118,20 @@ extension BusinessViewController: UICollectionViewDataSource {
 extension BusinessViewController: UICollectionViewDelegate {
     func collectionView(_ collectionView: UICollectionView,
                         didSelectItemAt indexPath: IndexPath) {
-        guard let article = viewModel.articles[indexPath.section].items[indexPath.row] as? ArticleCellViewModel else {
-            return
+        guard let article = viewModel.articles[indexPath.section].items[indexPath.row] as? ArticleCellViewModel else { return }
+        navigationController?.pushViewController(NewsViewController(viewModel: NewsViewModel(article: article)),
+                                                 animated: true)
+        
+        func collectionView(_ collectionView: UICollectionView,
+                            willDisplay cell: UICollectionViewCell,
+                            forItem indexPath: IndexPath) {
+            if indexPath.row == (viewModel.articles[1].items.count - 15) {
+                viewModel.loadData()
+            }
         }
         
-        let newsViewModel = NewsViewModel(article: article)
-        let newsVC = NewsViewController(viewModel: newsViewModel)
-        navigationController?.pushViewController(newsVC, animated: true)
+    
+
     }
 }
 

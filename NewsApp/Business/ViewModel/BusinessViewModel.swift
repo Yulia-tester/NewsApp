@@ -11,7 +11,7 @@ protocol BusinessViewModelProtocol {
     var reloadData: (() -> Void)? { get set }
     var showError: ((String) -> Void)? { get set }
     var reloadCell: ((IndexPath) -> Void)? { get set }
-    var articles: [TableCollectionViewSection] { get }
+    var sections: [TableCollectionViewSection] { get }
     
     func loadData()
 }
@@ -22,7 +22,7 @@ final class BusinessViewModel: BusinessViewModelProtocol {
     var showError: ((String) -> Void)?
     
     // MARK: - Properties
-    private(set) var articles: [TableCollectionViewSection] = [] {
+    private(set) var sections: [TableCollectionViewSection] = [] {
         didSet {
             DispatchQueue.main.async {
                 self.reloadData?()
@@ -30,11 +30,13 @@ final class BusinessViewModel: BusinessViewModelProtocol {
         }
     }
     
+    private var page = 0
     
     func loadData() {
         print(#function)
+        page += 1
         
-        ApiManager.getNews { [weak self] result in
+        ApiManager.getNews(from: "business", page: page) { [weak self] result in
             guard let self = self else { return }
             
             switch result {
@@ -48,21 +50,24 @@ final class BusinessViewModel: BusinessViewModelProtocol {
             }
         }
         
-        //setupMockObjects()
+        // setupMockObjects()
     }
     
     private func loadImage() {
-        for (i, section) in articles.enumerated() {
+        for (i, section) in sections.enumerated() {
             for (index, item) in section.items.enumerated() {
                 guard let article = item as? ArticleCellViewModel else { continue }
-                // если imageUrl — non-optional String, просто используем его:
-                let url = article.imageUrl
 
+                // если imageUrl — optional, разворачиваем; если нет — просто используем
+                //guard let url = article.imageUrl, !url.isEmpty else { continue }
+                let url = article.imageUrl
+                if url.isEmpty { continue }
+                
                 ApiManager.getImageData(url: url) { [weak self] result in
                     DispatchQueue.main.async {
                         switch result {
                         case .success(let data):
-                            if let article = self?.articles[i].items[index] as? ArticleCellViewModel {
+                            if let article = self?.sections[i].items[index] as? ArticleCellViewModel {
                                 article.imageData = data
                             }
                             self?.reloadCell?(IndexPath(row: index, section: i))
@@ -75,26 +80,32 @@ final class BusinessViewModel: BusinessViewModelProtocol {
         }
     }
 
-    
     private func convertToCellViewModel(_ responses: [ArticleResponseObject]) {
         var viewModels = responses.map { ArticleCellViewModel(article: $0) }
-        // безопасно обрабатывать пустой результат
-        if viewModels.isEmpty {
-            self.articles = []
-            return
+        
+        guard !viewModels.isEmpty else { return }
+        
+        if sections.isEmpty {
+            // создаём 2 секции: первая — один главный элемент, вторая — остальные
+            let firstSection = TableCollectionViewSection(items: [viewModels.removeFirst()])
+            let secondSection = TableCollectionViewSection(items: viewModels)
+            sections = [firstSection, secondSection]
+        } else if sections.count > 1 {
+            // добавляем новые элементы в существующую вторую секцию
+            sections[1].items.append(contentsOf: viewModels)
         }
-        let first = TableCollectionViewSection(items: [viewModels.removeFirst()])
-        let second = TableCollectionViewSection(items: viewModels)
-        self.articles = [first, second]
     }
     
     private func setupMockObjects() {
-        articles = [
-            TableCollectionViewSection(items: [ArticleCellViewModel(article: ArticleResponseObject(title: "First object title",
-                                                                                                description: "First object description in the mock object",
-                                                                                                urlToImage: "...",
-                                                                                                date: "04.06.2025"))])
+        sections = [
+            TableCollectionViewSection(items: [
+                ArticleCellViewModel(article: ArticleResponseObject(
+                    title: "First object title",
+                    description: "First object description in the mock object",
+                    urlToImage: "...",
+                    date: "04.06.2025"
+                ))
+            ])
         ]
     }
 }
-
