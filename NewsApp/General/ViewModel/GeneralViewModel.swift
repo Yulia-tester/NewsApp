@@ -26,6 +26,7 @@ final class GeneralViewModel: GeneralViewModelProtocol {
     var numberOfCells: Int {
         articles.count
     }
+    
     private var articles: [ArticleCellViewModel] = [] {
         didSet {
             DispatchQueue.main.async {
@@ -43,8 +44,7 @@ final class GeneralViewModel: GeneralViewModelProtocol {
     }
     
     private func loadData() {
-        
-        ApiManager.getNews { [weak self] result in
+        ApiManager.getNews(from: .general., page: 1) { [weak self] result in
             guard let self = self else { return }
             
             switch result {
@@ -58,17 +58,15 @@ final class GeneralViewModel: GeneralViewModelProtocol {
             }
         }
         
-        //setupMockObjects()
+        // setupMockObjects()
     }
     
     private func loadImage() {
-        //        guard let url = URL(string: articles[row].imageUrl),
-        //             let data = try? Data(contentsOf: url) else { return }
-        
         for (index, article) in articles.enumerated() {
-            ApiManager.getImageData(url: article.imageUrl) { [weak self]
-                result in
-                
+            let url = article.imageUrl
+            if url.isEmpty { continue }
+            
+            ApiManager.getImageData(url: url) { [weak self] result in
                 DispatchQueue.main.async {
                     switch result {
                     case .success(let data):
@@ -88,10 +86,12 @@ final class GeneralViewModel: GeneralViewModelProtocol {
     
     private func setupMockObjects() {
         articles = [
-            ArticleCellViewModel(article: ArticleResponseObject(title: "First object title",
-                                                                description: "First object description in the mock object",
-                                                                urlToImage: "...",
-                                                                date: "04.06.2025"))
+            ArticleCellViewModel(article: ArticleResponseObject(
+                title: "First object title",
+                description: "First object description in the mock object",
+                urlToImage: "...",
+                date: "04.06.2025"
+            ))
         ]
     }
 }
