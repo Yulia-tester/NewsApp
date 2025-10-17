@@ -36,7 +36,7 @@ final class BusinessViewModel: BusinessViewModelProtocol {
         print(#function)
         page += 1
         
-        ApiManager.getNews(from: "business", page: page) { [weak self] result in
+        ApiManager.getNews(from: .business, page: page) { [weak self] result in
             guard let self = self else { return }
             
             switch result {
